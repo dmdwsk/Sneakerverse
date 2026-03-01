@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -24,6 +26,13 @@ import java.util.UUID;
         }
 )
 public class User {
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private Set<UserRole> roles = new HashSet<>();
 
     @Id
     @GeneratedValue
@@ -50,5 +59,16 @@ public class User {
     void onCreate() {
         if (status == null) status = UserStatus.ACTIVE;
         if (createdAt == null) createdAt = Instant.now();
+    }
+    public void addRole(Role role) {
+        UserRole link = UserRole.builder()
+                .user(this)
+                .role(role)
+                .build();
+        this.roles.add(link);
+    }
+
+    public void removeRole(Role role) {
+        this.roles.removeIf(ur -> ur.getRole().getName() == role.getName());
     }
 }
