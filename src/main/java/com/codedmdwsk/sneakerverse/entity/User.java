@@ -34,6 +34,10 @@ public class User {
     @Builder.Default
     private Set<UserRole> roles = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Address> addresses = new HashSet<>();
+
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false, updatable = false, columnDefinition = "uuid")
